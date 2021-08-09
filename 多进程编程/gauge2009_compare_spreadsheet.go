@@ -10,15 +10,15 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/shopspring/decimal"
 	//"github.com/xuri/excelize/v2"
 	"strconv"
 )
 
-
 // 最终方案-全兼容
 func getCurrentAbPath() string {
 	dir := getCurrentAbPathByExecutable()
-	if strings.Contains(dir,getTmpDir())  {
+	if strings.Contains(dir, getTmpDir()) {
 		return getCurrentAbPathByCaller()
 	}
 	return dir
@@ -54,7 +54,6 @@ func getCurrentAbPathByCaller() string {
 	return abPath
 }
 
-
 func main() {
 	/// 计算值
 	//SmartCheckCalc("D:\\T2_21\\Golang十四章经\\6.2.go高并发分布式与微服务\\6.2.go高并发分布式与微服务（以上后台素材以全）\\1.进程线程复习\\code\\多进程编程\\inspect_data.xlsx")
@@ -63,38 +62,36 @@ func main() {
 	///// 预期值
 	//SmartCheckCalc("D:\\T2_21\\Golang十四章经\\6.2.go高并发分布式与微服务\\6.2.go高并发分布式与微服务（以上后台素材以全）\\1.进程线程复习\\code\\多进程编程\\inspect_data.expect.xlsx")
 
-
 	//path_root := getCurrentAbPathByExecutable() // go run 与 go build 执行不一样，前者使用C:\Users\Administrator\AppData\Local\Temp
 	path_root := getCurrentAbPath() // // go run 与 go build  统一使用go run 制指定的
 	fmt.Println("getCurrentAbPath = ", path_root)
 
-	sheet_name :="ats_result_viewmodel"
+	sheet_name := "ats_result_viewmodel"
 	//
 	///// 获得行列数
 	//path_calc :="D:\\T2_21\\Golang十四章经\\6.2.go高并发分布式与微服务\\6.2.go高并发分布式与微服务（以上后台素材以全）\\1.进程线程复习\\code\\多进程编程\\inspect_data.xlsx"
 	//path_expect :="D:\\T2_21\\Golang十四章经\\6.2.go高并发分布式与微服务\\6.2.go高并发分布式与微服务（以上后台素材以全）\\1.进程线程复习\\code\\多进程编程\\inspect_data.expect.xlsx"
-	path_calc :=path_root+"\\inspect_data.xlsx"
-	path_expect :=path_root+"\\inspect_data.expect.xlsx"
+	path_calc := path_root + "\\inspect_data.xlsx"
+	path_expect := path_root + "\\inspect_data.expect.xlsx"
 
-	len_rows, len_cell := SmartGetRowColumnCount(path_calc,sheet_name)
+	len_rows, len_cell := SmartGetRowColumnCount(path_calc, sheet_name)
 	fmt.Println(len_rows)
 	fmt.Println(len_cell)
 
 	//column_dictionary := make(map [int] string)
-	column_dictionary :=  map [int] string{
-		0:"A", 1:"B", 2:"C", 3:"D", 4:"E", 5:"F", 6:"G", 7:"H", 8:"I", 9:"J", 10:"K", 11:"L", 12:"M", 13:"N", 14:"O", 15:"P", 16:"Q", 17:"R", 18:"S", 19:"T", 20:"U", 21:"V", 22:"W", 23:"X", 24:"Y", 25:"Z",
-		26:"AA", 27:"AB", 28:"AC", 29:"AD", 30:"AE", 31:"AF", 32:"AG", 33:"AH", 34:"AI", 35:"AJ", 36:"AK", 37:"AL", 38:"AM", 39:"AN", 40:"AO", 41:"AP", 42:"AQ", 43:"AR", 44:"AS", 45:"AT", 46:"AU", 47:"AV", 48:"AW", 49:"AX", 50:"AY", 51:"AZ",
-		52:"BA", 53:"BB", 54:"BC", 55:"BD", 56:"BE", 57:"BF", 58:"BG", 59:"BH", 60:"BI", 61:"BJ", 62:"BK", 63:"BL", 64:"BM", 65:"BN", 66:"BO", 67:"BP", 68:"BQ", 69:"BR", 70:"BS", 71:"BT", 72:"BU", 73:"BV", 74:"BW", 75:"BX", 76:"BY", 77:"BZ",
-		78:"CA", 79:"CB", 80:"CC", 81:"CD", 82:"CE", 83:"CF", 84:"CG", 85:"CH", 86:"CI", 87:"CJ", 88:"CK", 89:"CL", 90:"CM", 91:"CN", 92:"CO", 93:"CP", 94:"CQ", 95:"CR", 96:"CS", 97:"CT", 98:"CU", 99:"CV", 100:"CW", 101:"CX", 102:"CY", 103:"CZ",
+	column_dictionary := map[int]string{
+		0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5: "F", 6: "G", 7: "H", 8: "I", 9: "J", 10: "K", 11: "L", 12: "M", 13: "N", 14: "O", 15: "P", 16: "Q", 17: "R", 18: "S", 19: "T", 20: "U", 21: "V", 22: "W", 23: "X", 24: "Y", 25: "Z",
+		26: "AA", 27: "AB", 28: "AC", 29: "AD", 30: "AE", 31: "AF", 32: "AG", 33: "AH", 34: "AI", 35: "AJ", 36: "AK", 37: "AL", 38: "AM", 39: "AN", 40: "AO", 41: "AP", 42: "AQ", 43: "AR", 44: "AS", 45: "AT", 46: "AU", 47: "AV", 48: "AW", 49: "AX", 50: "AY", 51: "AZ",
+		52: "BA", 53: "BB", 54: "BC", 55: "BD", 56: "BE", 57: "BF", 58: "BG", 59: "BH", 60: "BI", 61: "BJ", 62: "BK", 63: "BL", 64: "BM", 65: "BN", 66: "BO", 67: "BP", 68: "BQ", 69: "BR", 70: "BS", 71: "BT", 72: "BU", 73: "BV", 74: "BW", 75: "BX", 76: "BY", 77: "BZ",
+		78: "CA", 79: "CB", 80: "CC", 81: "CD", 82: "CE", 83: "CF", 84: "CG", 85: "CH", 86: "CI", 87: "CJ", 88: "CK", 89: "CL", 90: "CM", 91: "CN", 92: "CO", 93: "CP", 94: "CQ", 95: "CR", 96: "CS", 97: "CT", 98: "CU", 99: "CV", 100: "CW", 101: "CX", 102: "CY", 103: "CZ",
 	}
 
-
-	SmartCompareThose(path_calc,path_expect,sheet_name,len_rows,len_cell,column_dictionary);
+	SmartCompareThose(path_calc, path_expect, sheet_name, len_rows, len_cell, column_dictionary)
 
 	//SmartGetCols(path_calc,sheet_name)
 }
 
-func SmartCheckCalc( path string) {
+func SmartCheckCalc(path string) {
 	//arg := []string{}// 切片
 	//arg = append(arg,"inspect,60004")// 切片后加一个元素
 	f, err := excelize.OpenFile(path)
@@ -124,8 +121,7 @@ func SmartCheckCalc( path string) {
 
 }
 
-
-func SmartGetRowColumnCount( path string,sheet_name string)(len_rows int ,len_cell int ) {
+func SmartGetRowColumnCount(path string, sheet_name string) (len_rows int, len_cell int) {
 
 	f, err := excelize.OpenFile(path)
 	if err != nil {
@@ -158,7 +154,7 @@ func SmartGetRowColumnCount( path string,sheet_name string)(len_rows int ,len_ce
 	for _, row := range rows {
 
 		temp := len(row)
-		if(temp>len_cell){
+		if temp > len_cell {
 			len_cell = temp
 		}
 	}
@@ -166,11 +162,9 @@ func SmartGetRowColumnCount( path string,sheet_name string)(len_rows int ,len_ce
 
 	return
 
-
 }
 
-
-func SmartCompareThose( path_calc string,path_expect string,sheet_name string,len_rows int ,len_cell int, column_dictionary map [int] string) {
+func SmartCompareThose(path_calc string, path_expect string, sheet_name string, len_rows int, len_cell int, column_dictionary map[int]string) {
 
 	//arg := []string{}// 切片
 	//arg = append(arg,"inspect,60004")// 切片后加一个元素
@@ -219,6 +213,10 @@ func SmartCompareThose( path_calc string,path_expect string,sheet_name string,le
 	"fill":{"type":"gradient","color":["#FFFF00","#E0EBF5"],"shading":1},
 	"border":[{"type":"left","color":"42CFD2","style":6},{"type":"top","color":"42CFD2","style":6},{"type":"bottom","color":"42CFD2","style":6},{"type":"right","color":"42CFD2","style":6}]
 }`)
+	style_tips, err := f_diff.NewStyle(`{
+   "font": {  "bold": false,  "family": "font-family",  "size": 11, "color": "#FB5A19"  },
+   "border":[{"type":"left","color":"42CFD2","style":6},{"type":"top","color":"42CFD2","style":6},{"type":"bottom","color":"42CFD2","style":6},{"type":"right","color":"42CFD2","style":6}]
+}`)
 	err = f_diff.SetHeaderFooter(sheet_name, &excelize.FormatHeaderFooter{
 		DifferentFirst:   true,
 		DifferentOddEven: true,
@@ -232,35 +230,75 @@ func SmartCompareThose( path_calc string,path_expect string,sheet_name string,le
 	///差异文件的行号索引（2基,因第一行已被表头占据）
 	index_dif_expect := 2
 	index_dif_calc := 2
-	for i:=0; i< len_rows;i++{
-		for j:=0;j<len_cell;j++{
-			axis_name :=  column_dictionary[j]+ strconv.Itoa(i+1)
+	for i := 0; i < len_rows; i++ {
+		diff_desc_idx := 0
+		for j := 0; j < len_cell; j++ {
+			axis_name := column_dictionary[j] + strconv.Itoa(i+1)
 			///先形成表头
-			if i==0 {
+			if i == 0 {
 				//f_diff.SetCellValue("ats_result", "D2", rows[i][j])
 				f_diff.SetCellValue(sheet_name, axis_name, rows_exp[i][j])
-			}else {
+			} else {
 				/// 记录预期值
 				//index_dif_expect =index_dif_expect
 				axis_name = column_dictionary[j] + strconv.Itoa(index_dif_expect)
 				f_diff.SetCellValue(sheet_name, axis_name, rows_exp[i][j])
+				/// 数值类型cell的预期
+				is_number := false
+				is_decmal := false
+				number_cell_val_expect, err := strconv.Atoi(rows_exp[i][j])
+				if err == nil {
+					is_number = true
+				}
+				fmt.Println(number_cell_val_expect)
+				/// 数值类型cell的计算值
+				number_cell_val, err := strconv.Atoi(rows[i][j])
+				if err == nil {
+					is_number = true
+
+				}
+				fmt.Println(number_cell_val)
+				decimal_cell_val_expect, err := decimal.NewFromString(rows_exp[i][j])
+				if err == nil {
+					is_decmal = true
+				}
+				//if decimal_cell_val_expect > 0 {
+				//	fmt.Println("####################")
+				fmt.Println(decimal_cell_val_expect)
+				//}
+				decimal_cell_val, err := decimal.NewFromString(rows[i][j])
+				if err == nil {
+					is_decmal = true
+				}
+				fmt.Println(decimal_cell_val)
+				fmt.Println(is_decmal)
 				/// 记录差异
-				if rows[i][j] != rows_exp[i][j] {
+				//if  (is_number ==false && rows[i][j] != rows_exp[i][j] )  ||  (is_number  && number_cell_val_expect != number_cell_val) ||  (is_decmal  && decimal_cell_val_expect.String() != decimal_cell_val.String())  {
+				if is_number == false && rows[i][j] != rows_exp[i][j] {
+					diff_desc_idx++
 					fmt.Print(rows[i][j], "\t")
 					fmt.Print(rows_exp[i][j], "\t")
 
 					/// 记录计算差异值
-					index_dif_calc =index_dif_calc+1
-					axis_name_calc  := column_dictionary[j] + strconv.Itoa(index_dif_calc)
+					index_dif_calc = index_dif_calc + 1 // 同一条目，每个差异另起一行
+					//index_dif_calc =i+2 +1 // 同一条目，所有差异安排在一行
+					axis_name_calc := column_dictionary[j] + strconv.Itoa(index_dif_calc)
 					f_diff.SetCellValue(sheet_name, axis_name_calc, rows[i][j])
 					f_diff.SetCellStyle(sheet_name, axis_name_calc, axis_name_calc, style)
 					//f_diff.SetColWidth(sheet_name, axis_name_calc, axis_name_calc, 400)
+					// 首列描述：
+					axis_name_tips := column_dictionary[0] + strconv.Itoa(index_dif_calc)
+					tips := "差异" + strconv.Itoa(diff_desc_idx) + ":"
+					f_diff.SetCellValue(sheet_name, axis_name_tips, tips)
+					f_diff.SetCellStyle(sheet_name, axis_name_tips, axis_name_tips, style_tips)
 				}
 			}
 		}
-		index_dif_calc ++
+		index_dif_calc++
 		index_dif_expect = index_dif_calc
-		fmt.Println( )
+		//index_dif_expect = index_dif_expect + 2
+		fmt.Println("================index_dif_expect==================", "\t")
+		fmt.Println(index_dif_expect, "\t")
 	}
 
 	f_diff.SetActiveSheet(index)
@@ -268,7 +306,7 @@ func SmartCompareThose( path_calc string,path_expect string,sheet_name string,le
 	path_root := getCurrentAbPath() // // go run 与 go build  统一使用go run 制指定的
 	fmt.Println("getCurrentAbPath = ", path_root)
 	//save_to_path := "D:\\T2_21\\Golang十四章经\\6.2.go高并发分布式与微服务\\6.2.go高并发分布式与微服务（以上后台素材以全）\\1.进程线程复习\\code\\多进程编程\\inspect_data.compare.xlsx"
-	save_to_path := path_root+"\\inspect_data.compare.xlsx"
+	save_to_path := path_root + "\\inspect_data.compare.xlsx"
 	if err := f_diff.SaveAs(save_to_path); err != nil {
 		fmt.Println(err)
 	}
@@ -303,7 +341,7 @@ func SmartCompareThose( path_calc string,path_expect string,sheet_name string,le
 
 }
 
-func SmartGetCols (path  string,sheet_name string)  {
+func SmartGetCols(path string, sheet_name string) {
 	/// 计算值
 	f, err := excelize.OpenFile(path)
 	if err != nil {
@@ -326,4 +364,3 @@ func SmartGetCols (path  string,sheet_name string)  {
 		fmt.Println()
 	}
 }
-
