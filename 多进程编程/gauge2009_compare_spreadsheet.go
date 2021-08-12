@@ -246,35 +246,28 @@ func SmartCompareThose(path_calc string, path_expect string, sheet_name string, 
 				/// 数值类型cell的预期
 				is_number := false
 				is_decmal := false
-				number_cell_val_expect, err := strconv.Atoi(rows_exp[i][j])
-				if err == nil {
-					is_number = true
-				}
+				number_cell_val_expect, err1 := strconv.Atoi(rows_exp[i][j])
 				fmt.Println(number_cell_val_expect)
 				/// 数值类型cell的计算值
-				number_cell_val, err := strconv.Atoi(rows[i][j])
-				if err == nil {
+				number_cell_val, err2 := strconv.Atoi(rows[i][j])
+				if err1 == nil && err2 == nil {
 					is_number = true
-
 				}
 				fmt.Println(number_cell_val)
-				decimal_cell_val_expect, err := decimal.NewFromString(rows_exp[i][j])
-				if err == nil {
-					is_decmal = true
-				}
+				decimal_cell_val_expect, err1 := decimal.NewFromString(rows_exp[i][j])
 				//if decimal_cell_val_expect > 0 {
 				//	fmt.Println("####################")
 				fmt.Println(decimal_cell_val_expect)
 				//}
-				decimal_cell_val, err := decimal.NewFromString(rows[i][j])
-				if err == nil {
+				decimal_cell_val, err2 := decimal.NewFromString(rows[i][j])
+				if err1 == nil && err2 == nil {
 					is_decmal = true
 				}
 				fmt.Println(decimal_cell_val)
 				fmt.Println(is_decmal)
 				/// 记录差异
-				//if  (is_number ==false && rows[i][j] != rows_exp[i][j] )  ||  (is_number  && number_cell_val_expect != number_cell_val) ||  (is_decmal  && decimal_cell_val_expect.String() != decimal_cell_val.String())  {
-				if is_number == false && rows[i][j] != rows_exp[i][j] {
+				if (is_number == false && rows[i][j] != rows_exp[i][j]) || (is_number && number_cell_val_expect != number_cell_val) || (is_decmal && decimal_cell_val_expect.String() != decimal_cell_val.String()) {
+					//if is_number == false && rows[i][j] != rows_exp[i][j]   {
 					diff_desc_idx++
 					fmt.Print(rows[i][j], "\t")
 					fmt.Print(rows_exp[i][j], "\t")
