@@ -174,8 +174,9 @@ func Update_Ats_result() {
 	//db.Model(&ats_result).Updates(map[string]interface{}{"Emp_id": "11-22-33-44-66", "Ats_seal_status": "N/A"})
 
 	db.Model(&ats_result).Where("create_dt > ?", "2021-08-16 14:00:00.000").Update("Ats_seal_status", "N/A")
+
 	probe := db.Model(&ats_result).Where("create_dt > ?", "2021-08-16 17:00:00.000").Updates(map[string]interface{}{"Emp_id": "11-22-33-44-66", "Ats_seal_status": "success"})
-	fmt.Printf("█ █ █ █ ██ █ █ █ ██ █ █ █ ██ █ █ █ █ probe= %v\n", probe.RowsAffected)
+	fmt.Printf("█ █ █ █ ██ █ █ █ █   █ █ █ █ ██ █ █ █ █ probe= %v\n", probe.RowsAffected)
 
 	//
 	//
