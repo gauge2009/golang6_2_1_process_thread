@@ -1,4 +1,4 @@
-package main
+package ormmssql
 
 import (
 	"database/sql"
@@ -46,13 +46,14 @@ func (m *Mssql) Open() (err error) {
 	}
 	return nil
 }
-func main() {
-	//access_mssql();
-	access_adodb()
-	execute_sp()
-}
 
-func access_adodb() {
+//func main() {
+//	//access_mssql();
+//	access_adodb()
+//	execute_sp()
+//}
+
+func Access_adodb() {
 	db := Mssql{
 		dataSource: "192.168.1.7\\HIVE",
 		database:   "base_inspection_company",
@@ -87,7 +88,7 @@ func access_adodb() {
 	}
 }
 
-func access_mssql() {
+func Access_mssql() {
 	flag.Parse()
 
 	if *debug {
