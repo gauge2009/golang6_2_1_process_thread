@@ -37,7 +37,7 @@ type Ats_result struct {
 	Ot_policy        string          `gorm:"size:50"`
 	Base_policy      string          `gorm:"size:50"`
 	Calendar_id      string          `gorm:"size:36"`
-	Read_dt          string          `gorm:"size:36"`
+	Read_dt          time.Time       `gorm:"type:datetime"`
 	Is_post          bool            `gorm:"type:bit"`
 	Unit             string          `gorm:"size:20"`
 	Inspect_status   string          `gorm:"size:20"`
@@ -127,36 +127,6 @@ func Invoke() {
 	FromExcelToMssql(path_calc, path_calc, sheet_name, len_rows, len_cell, column_dictionary)
 
 	//SmartGetCols(path_calc,sheet_name)
-}
-
-func SmartCheckCalc(path string) {
-	//arg := []string{}// 切片
-	//arg = append(arg,"inspect,60004")// 切片后加一个元素
-	f, err := excelize.OpenFile(path)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	// Get value from cell by given worksheet name and axis.
-	cell, err := f.GetCellValue("ats_result_viewmodel", "A2")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(cell)
-	// Get all the rows in the Sheet1.
-	rows, err := f.GetRows("ats_result_viewmodel")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	for _, row := range rows {
-		for _, colCell := range row {
-			fmt.Print(colCell, "\t")
-		}
-		fmt.Println()
-	}
-
 }
 
 func SmartGetRowColumnCount(path string, sheet_name string) (len_rows int, len_cell int) {
@@ -281,6 +251,10 @@ func FromExcelToMssql(path_calc string, path_expect string, sheet_name string, l
 
 					 fmt.Printf("AtsResult`s field_name is %s", ats_rslt.Key_id)
 				 }*/
+
+				/// █ █ █ █ █  █ █ █ █ █  █ █ █ █ █
+				/// █ █ █ █ █  █ █ █ █ █  █ █ █ █ █
+				/// █ █ █ █ █  █ █ █ █ █  █ █ █ █ █
 				SetValueByProperty(valueOfAtsResult, field_name, cell)
 				fmt.Printf("\nAtsResult`s field_name is %s\n", ats_result_obj.Key_id)
 				/// 记录预期值
@@ -293,21 +267,26 @@ func FromExcelToMssql(path_calc string, path_expect string, sheet_name string, l
 		}
 		fmt.Printf("================ end of row %v==================\n", i)
 
-		tn, _ := time.ParseInLocation("2006-01-02 15:04:05", time.Now().Format("2006-01-02 15:04:05"), time.Local)
+		//tn, _ := time.ParseInLocation("2006-01-02 15:04:05", time.Now().Format("2006-01-02 15:04:05"), time.Local)
 		//db.Create(&Ats_result{Key_id: "ats_result_08131626_01", Emp_id: "11-22-33-44-55",
 		//	Ats_date: t2, Create_dt: t2, Inspect_dt: t2, Last_updated_dt: t2, Push_dt: t2,
 		//	Set_hours: sh, Real_hours: rh,
 		//	Is_post: true})
 
 		if i > 0 {
-			db.Create(&Ats_result{Key_id: ats_result_obj.Key_id, Emp_id: ats_result_obj.Emp_id,
-				Ats_date: ats_result_obj.Ats_date, Create_dt: ats_result_obj.Create_dt, Inspect_dt: ats_result_obj.Inspect_dt, Last_updated_dt: ats_result_obj.Last_updated_dt, Push_dt: tn,
-				Set_hours: ats_result_obj.Set_hours, Real_hours: ats_result_obj.Real_hours,
-				Is_post: true})
 			//db.Create(&Ats_result{Key_id: ats_result_obj.Key_id, Emp_id: ats_result_obj.Emp_id,
-			//	Ats_date: ats_result_obj.Ats_date, Create_dt: ats_result_obj.Create_dt, Inspect_dt: ats_result_obj.Inspect_dt,
+			//	Ats_date: ats_result_obj.Ats_date, Create_dt: ats_result_obj.Create_dt, Inspect_dt: ats_result_obj.Inspect_dt, Last_updated_dt: ats_result_obj.Last_updated_dt, Push_dt: tn,
 			//	Set_hours: ats_result_obj.Set_hours, Real_hours: ats_result_obj.Real_hours,
-			//	Is_post: true})
+			//	Is_post: ats_result_obj.Is_post})
+			//db.Create( ats_result_obj)
+			db.Create(&Ats_result{Key_id: ats_result_obj.Key_id, Emp_id: ats_result_obj.Emp_id,
+				Ats_date: ats_result_obj.Ats_date, Create_dt: ats_result_obj.Create_dt, Inspect_dt: ats_result_obj.Inspect_dt, Read_dt: ats_result_obj.Read_dt, Last_updated_dt: ats_result_obj.Last_updated_dt, Push_dt: ats_result_obj.Push_dt,
+				Set_hours: ats_result_obj.Set_hours, Real_hours: ats_result_obj.Real_hours,
+				Is_post:    true,
+				Shift_type: ats_result_obj.Shift_type, Shift_class_type: ats_result_obj.Shift_class_type, Unit: ats_result_obj.Unit, Create_by: ats_result_obj.Create_by,
+				Ot_policy: ats_result_obj.Ot_policy, Last_updated_by: ats_result_obj.Last_updated_by, Base_policy: ats_result_obj.Base_policy, Calendar_id: ats_result_obj.Calendar_id,
+				Inspect_status: ats_result_obj.Inspect_status, Inspect_batch_id: ats_result_obj.Inspect_batch_id, Ats_seal_status: ats_result_obj.Ats_seal_status,
+			})
 		}
 
 	}
@@ -321,9 +300,9 @@ func FromExcelToMssql(path_calc string, path_expect string, sheet_name string, l
 /// 反射设置实例的某个属性
 func SetValueByProperty(valueOfObject reflect.Value, field_name string, cell_val string) {
 	fmt.Printf("█ █ █ █ █  █ █ █ █ █  █ █ █ █ █ %v", field_name)
-	if cell_val == "" {
-		return
-	}
+	//if cell_val == "" {
+	//	return
+	//}
 	property_name := strings.ToLower(field_name)
 	property_name = Capitalize(property_name)
 	/*switch field_name {
@@ -353,20 +332,24 @@ func SetValueByProperty(valueOfObject reflect.Value, field_name string, cell_val
 		println("█ █ █ █ █ datetime █ █ █ █ █ ")
 		var cell_val_time time.Time
 		if cell_val == "" {
-			now := time.Now().Format("2006-01-02 15:04:05") //go语言的诞生时间
-			cell_val_time, _ = time.ParseInLocation("2006-01-02 15:04:05", now, time.Local)
+			//now := time.Now().Format("2006-01-02 15:04:05") //go语言的诞生时间
+			cell_val_time, _ = time.ParseInLocation("2006-01-02 15:04:05", "2111-11-11 11:11:11", time.Local)
 		} else {
 			cell_val_time, _ = time.ParseInLocation("2006/01/02 15:04:05", cell_val, time.Local)
-			println(cell_val_time.String())
-			valueOfFiled := valueOfObject.FieldByName(property_name)
-			// 判断字段的 Value 是否可以设定变量值
-			if valueOfFiled.CanSet() {
-				val := reflect.ValueOf(cell_val_time)
-				valueOfFiled.Set(val)
-			} else {
-				print("oops")
+			if cell_val_time.String() == "0001-01-01 00:00:00 +0000 UTC" {
+				cell_val_time, _ = time.ParseInLocation("2006-01-02 15:04:05", "2211-11-11 11:11:11", time.Local)
 			}
 		}
+		println(cell_val_time.String())
+		valueOfFiled := valueOfObject.FieldByName(property_name)
+		// 判断字段的 Value 是否可以设定变量值
+		if valueOfFiled.CanSet() {
+			val := reflect.ValueOf(cell_val_time)
+			valueOfFiled.Set(val)
+		} else {
+			print("oops")
+		}
+
 	} else if field_name == "set_hours" || field_name == "real_hours" {
 		println("█ █ █ █ █ decimal █ █ █ █ █ ")
 		cell_val_num, _ := decimal.NewFromString(cell_val)
@@ -380,10 +363,17 @@ func SetValueByProperty(valueOfObject reflect.Value, field_name string, cell_val
 		}
 	} else if field_name == "is_post" {
 		println("█ █ █ █ █ bit █ █ █ █ █ ")
+		var cell_val_bool bool
+		if cell_val == "" || cell_val == "0" {
+			//cell_val_bool = nil
+			cell_val_bool = false
+		} else {
+			cell_val_bool = true
+		}
 		valueOfFiled := valueOfObject.FieldByName(property_name)
 		// 判断字段的 Value 是否可以设定变量值
 		if valueOfFiled.CanSet() {
-			val := reflect.ValueOf(cell_val)
+			val := reflect.ValueOf(cell_val_bool)
 			valueOfFiled.Set(val)
 		} else {
 			print("oops")
@@ -399,7 +389,7 @@ func SetValueByProperty(valueOfObject reflect.Value, field_name string, cell_val
 		}
 	}
 
-	//fmt.Printf("AtsResult`s field_name is %s", ats_rslt.Key_id)
+	fmt.Printf("cell_va = %s", cell_val)
 }
 
 ///字符首字母大写
