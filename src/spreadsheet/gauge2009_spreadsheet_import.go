@@ -262,11 +262,12 @@ func FromExcelToMssql(path_calc string, path_expect string, sheet_name string, l
 				SmartSetValueByProperty(typeOfAts_result, valueOfAtsResult, field_name, cell)
 
 				/// 记录预期值
-				//axis_name = column_dictionary[j] + strconv.Itoa(index_dif_expect)
-				fmt.Printf("row[%d], ", i)
-				fmt.Printf("axis_name=%s,", axis_name)
-				//cell := rows[i][j]
-				fmt.Printf("value = %v\n", cell)
+				/*
+					fmt.Printf("row[%d], ", i)
+					fmt.Printf("axis_name=%s,", axis_name)
+					fmt.Printf("value = %v\n", cell)
+				*/
+
 			}
 		}
 		fmt.Printf("================ end of row %v==================\n", i)
