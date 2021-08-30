@@ -1,0 +1,9 @@
+RegisterTime: "2021-8-30 15:05:00"
+Address: "Shanghai"
+ResumeInformation:
+  Name: "gauge"
+  Sex: "male"
+  Age: 103
+  Habits:
+    - "Bicycle"
+    - "Running"
