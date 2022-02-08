@@ -4,9 +4,16 @@ import (
 	"fmt"
 	"github.com/shopspring/decimal"
 	"reflect"
+	"runtime"
 	"strings"
 	"time"
 )
+
+///  反射获取当前函数名
+func funcName() string {
+	pc, _, _, _ := runtime.Caller(1)
+	return runtime.FuncForPC(pc).Name()
+}
 
 /// 反射，根据类型信息设置实例的某个属性
 func SmartSetValueByProperty(typeofClass reflect.Type, valueOfObject reflect.Value, field_name string, cell_val string) {

@@ -39,7 +39,7 @@ func main() {
 				log.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %s", message)
+			log.Printf("接受websocket消息: %s", message)
 		}
 	}()
 

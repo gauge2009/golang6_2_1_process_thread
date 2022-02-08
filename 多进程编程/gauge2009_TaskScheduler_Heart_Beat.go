@@ -12,25 +12,29 @@ import (
 
 	"github.com/gorilla/websocket"
 )
-var addr_taskscheduler = flag.String("addr", "localhost:10088", "TaskScheduler service address")
+
+/// TaskScheduler's address for WebSocket
+var addr_taskscheduler = flag.String("addr", "localhost:10088", "TaskScheduler's address for WebSocket")
+
 type SocketModel struct {
 	//Index int16
 	FunctionName string
-	SiteCode string
-	EmpID string	`json:"empid"`
-	Token string	`json:"token"`
-	Data string
-	StructureID string
+	SiteCode     string
+	EmpID        string `json:"empid"`
+	Token        string `json:"token"`
+	Data         string
+	StructureID  string
 	//Info int8
 }
+
 func BuildSocketModel(FunctionName string, SiteCode string, EmpID string, Token string, Data string, StructureID string) *SocketModel {
 	return &SocketModel{
-		FunctionName:FunctionName,
-		SiteCode:SiteCode,
-		EmpID:EmpID,
-		Token:Token,
-		Data:Data,
-		StructureID:StructureID,
+		FunctionName: FunctionName,
+		SiteCode:     SiteCode,
+		EmpID:        EmpID,
+		Token:        Token,
+		Data:         Data,
+		StructureID:  StructureID,
 	}
 }
 func main() {
@@ -44,7 +48,7 @@ func main() {
 	if err != nil {
 		/// 心跳异常情形1）server端在建立连接前已然宕机， client 连接创建时就会err —— Err 10061
 		/// TODO : 发送email
-
+		/// TODO 2: 执行auto recover
 
 		log.Fatal("dial:", err)
 	}
@@ -75,7 +79,7 @@ func main() {
 			//var socketModel SocketModel
 			//socketModel := new(SocketModel)
 			//socketModel :=  &SocketModel{}
-			socketModel:= BuildSocketModel("ping_from_crystal_beacon","Company1","N/A","N/A","","N/A")
+			socketModel := BuildSocketModel("ping_from_crystal_beacon_golang", "Company1", "N/A", "N/A", "", "N/A")
 			socketModelbytes, err0 := json.Marshal(socketModel)
 			fmt.Println(socketModel)
 			fmt.Println(string(socketModelbytes))
@@ -86,8 +90,8 @@ func main() {
 			err := c.WriteMessage(websocket.TextMessage, socketModelbytes)
 			if err != nil {
 				/// 心跳异常情形2）如果client 在成功连接server后，server端宕机，client 在后续发送消息时也会err——WSAECONNABORTED (10053)【WSAE CONN ABORTED】
-				/// TODO : 发送email
-
+				/// TODO 1: 发送email
+				/// TODO 2: 执行auto recover
 
 				log.Println("write:", err)
 				return
@@ -95,7 +99,7 @@ func main() {
 		case <-interrupt:
 			log.Println("interrupt")
 
-		   // I/O阻塞
+			// I/O阻塞
 			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Println("write close:", err)
