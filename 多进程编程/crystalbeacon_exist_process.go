@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/shirou/gopsutil/v3/process"
+	"runtime"
 	"time"
 )
 
@@ -20,7 +22,41 @@ func JudgeProcessExist(pname *string) *ProcessStat {
 	return &p_stat
 }
 
+func MoniorProcess() {
+	fmt.Printf("██ ██ ██ %v\n", funcName())
+	fmt.Printf("██ ██ ██ %v\n", "Processes")
+	var rootProcess *process.Process
+	processes, _ := process.Processes()
+	for _, p := range processes {
+		if p.Pid == 9120 {
+			rootProcess = p
+			break
+		}
+		// fmt.Println(p.name) //?? gopsutil为何把 name属性设计为私有
+		//if p.Name() == "HRLink.TaskScheduler" {
+		//	rootProcess = p
+		//	break
+		//}
+	}
+
+	fmt.Println(rootProcess)
+
+	fmt.Println("children:")
+	children, _ := rootProcess.Children()
+	for _, p := range children {
+		fmt.Println(p)
+	}
+
+}
+
+///  反射获取当前函数名
+func funcName() string {
+	pc, _, _, _ := runtime.Caller(1)
+	return runtime.FuncForPC(pc).Name()
+}
+
 func main() {
 	target := "nginx.exe"
+	MoniorProcess()
 	JudgeProcessExist(&target)
 }

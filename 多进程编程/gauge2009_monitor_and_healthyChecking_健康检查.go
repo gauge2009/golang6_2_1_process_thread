@@ -8,8 +8,8 @@ func main() {
 	//gmonitor.MoniorCPU()
 	gmonitor.MoniorDisk()
 	gmonitor.MoniorHost()
-	gmonitor.MoniorProcess()
 	gmonitor.MoniorWindowsService()
+	gmonitor.MoniorProcess()
 	//gmonitor.MoniorMemory()
 	//gmonitor.MoniorMemory()
 

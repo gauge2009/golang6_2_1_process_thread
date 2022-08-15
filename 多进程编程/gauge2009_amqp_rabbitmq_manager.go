@@ -21,8 +21,8 @@ import (
 // Try running this in one terminal, and `rabbitmq-server` in another.
 // Stop & restart RabbitMQ to see how the queue reacts.
 func main() {
-	name := "job_queue"
-	addr := "amqp://gauge:sparksubmit666@192.168.52.128:5672/"
+	name := "queue_TASK_STATUS_MONITOR__worker_v"
+	addr := "amqp://gauge:sparksubmit666@192.168.1.7:5672/"
 	queue := Common.New(name, addr)
 	message := []byte("message")
 	// Attempt to push a message every 2 seconds

@@ -9,14 +9,20 @@ import (
 	"github.com/streadway/amqp"
 )
 
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
 func main() {
 	// Connects opens an AMQP connection from the credentials in the URL.
-	addr := "amqp://gauge:sparksubmit666@192.168.52.128:5672/"
+	//addr := "amqp://gauge:sparksubmit666@192.168.1.7:5672/TMW"
+	/// gl代表vhout——虚拟机
+	addr := "amqp://promvc:sparksubmit666@127.0.0.1:5672/gl"
 	conn, err := amqp.Dial(addr)
 
-	if err != nil {
-		log.Fatalf("connection.open: %s", err)
-	}
+	failOnError(err, "Failed to connect to RabbitMQ")
+
 	defer conn.Close()
 
 	channel, err := conn.Channel()
