@@ -2,16 +2,38 @@ package main
 
 import (
 	"fmt"
+	"github.com/jordan-wright/email"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/mem"
 	"golang.org/x/sys/windows"
 	"log"
+	"net/smtp"
 
 	//"errors"
 	"unsafe"
 )
 
 func main() {
+	// 简单设置 log 参数
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+	em := email.NewEmail()
+	// 设置 sender 发送方 的邮箱 ， 此处可以填写自己的邮箱
+	em.From = "richter.zhang@hrlink.com.cn"
+	// 设置 receiver 接收方 的邮箱  此处也可以填写自己的邮箱， 就是自己发邮件给自己
+	em.To = []string{"richter.zhang@hrlink.com.cn"}
+	// 设置主题
+	em.Subject = "email test by jordan-wright /email"
+	// 简单设置文件发送的内容，暂时设置成纯文本
+	em.Text = []byte("Hi， email test by jordan-wright /email\"")
+	//设置服务器相关的配置
+	err := em.Send("smtp.exmail.qq.com:587", smtp.PlainAuth("", "hrlinktest@hrlink.com.cn", "!QA2ws3ed", "smtp.exmail.qq.com"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("send successfully ... ")
+}
+func main1() {
+
 	CheckMemory()
 	CheckMDiskUsage("C:")
 	CheckMDiskUsage("D:")
