@@ -1,44 +1,69 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
-	"github.com/jordan-wright/email"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/mem"
 	"golang.org/x/sys/windows"
+	"gopkg.in/gomail.v2"
 	"log"
-	"net/smtp"
+	"strconv"
 
 	//"errors"
 	"unsafe"
 )
 
+/// https://golangbyexample.com/
+/// ██ ██ ██  检查磁盘 + 预警邮件  22-817
 func main() {
-	// 简单设置 log 参数
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
-	em := email.NewEmail()
-	// 设置 sender 发送方 的邮箱 ， 此处可以填写自己的邮箱
-	em.From = "richter.zhang@hrlink.com.cn"
-	// 设置 receiver 接收方 的邮箱  此处也可以填写自己的邮箱， 就是自己发邮件给自己
-	em.To = []string{"richter.zhang@hrlink.com.cn"}
-	// 设置主题
-	em.Subject = "email test by jordan-wright /email"
-	// 简单设置文件发送的内容，暂时设置成纯文本
-	em.Text = []byte("Hi， email test by jordan-wright /email\"")
-	//设置服务器相关的配置
-	err := em.Send("smtp.exmail.qq.com:587", smtp.PlainAuth("", "hrlinktest@hrlink.com.cn", "!QA2ws3ed", "smtp.exmail.qq.com"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("send successfully ... ")
-}
-func main1() {
 
-	CheckMemory()
-	CheckMDiskUsage("C:")
-	CheckMDiskUsage("D:")
-	CheckMDiskUsage("R:")
-	//DiskUsage("D:")
+	/// ██ ██ ██  检查磁盘
+	path := "C:"
+	var ceiling float64 = 95
+	var ceilingLine int = int(ceiling)
+
+	perc := CheckMDiskUsage(path)
+	fmt.Printf("the disk [%+v] with usage [%+v]\n", path, perc)
+	if perc > ceiling {
+
+		message := "the disk [" + path + "] with usage [" + strconv.FormatInt(int64(int(perc)), 10) + "%],exceeds the warning ceiling [" + strconv.FormatInt(int64(ceilingLine), 10) + "%] "
+		fmt.Printf("%+v \n", message)
+
+		/// ██ ██ ██  预警邮件
+		subject := message
+		msg := message
+		AlertByMailv2(subject, msg)
+
+	}
+	//CheckMemory()
+}
+
+func AlertByMailv2(subject, message string) {
+	m := gomail.NewMessage()
+	///////m.SetHeader("From", "richter.zhang@hrlink.com.cn")// gomail: could not send email 1: 501 mail from address must be same as authorization user
+	//m.SetHeader("From", "hrlinktest@hrlink.com.cn")
+	//m.SetHeader("To", "richter.zhang@hrlink.com.cn")
+	//m.SetAddressHeader("Cc", "promvc@live.com", "PROMVC")
+	//m.SetHeader("Subject", subject)
+	//m.SetBody("text/html", message)
+	////////m.Attach("/home/Alex/lolcat.jpg")
+	m.SetHeaders(map[string][]string{
+		"From":    {m.FormatAddress("hrlinktest@hrlink.com.cn", "GrystalBeacon")},
+		"To":      {"richter.zhang@hrlink.com.cn", "promvc@live.com"},
+		"Cc":      {"promvc@live.com"},
+		"Subject": {subject},
+	})
+	m.SetBody("text/html", message)
+	d := gomail.NewDialer("smtp.exmail.qq.com", 587, "hrlinktest@hrlink.com.cn", "!QA2ws3ed")
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	// Send the email to Bob, Cora and Dan.
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	fmt.Println("Email Sent Successfully!")
 }
 
 func CheckMemory() {
@@ -48,12 +73,13 @@ func CheckMemory() {
 
 	fmt.Println(v)
 }
-func CheckMDiskUsage(path string) {
+func CheckMDiskUsage(path string) float64 {
 	v, _ := disk.Usage(path)
 
-	fmt.Printf("Total: %v, Available: %v, UsedPercent:%f%%\n", v.Total, v.Used, v.UsedPercent)
-
-	fmt.Println(v)
+	percent := v.UsedPercent // float64
+	//fmt.Printf("Total: %v, Available: %v, UsedPercent:%f%%\n", v.Total, v.Used, v.UsedPercent)
+	//fmt.Println(v)
+	return percent
 }
 
 type DiskStatus struct {

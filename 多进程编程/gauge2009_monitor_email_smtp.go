@@ -2,11 +2,21 @@ package main
 
 import (
 	"fmt"
+	"gmonitor"
 	"net/smtp"
 	"strings"
 )
 
-///发送成功的场景：content_type 必须是 text/html 且不嗯呢该有html标签
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+// █ █ █ █  SendToMailWithoutCC 和 gmonitor.SendToMailV2都不能稳定发送邮件，源于TLS设置未正确设置
+///发送成功的场景：content_type 必须是 text/html 且能有html标签
 func SendToMailWithoutCC(user, password, host, subject, body, mailtype string, send_to []string) error {
 	hp := strings.Split(host, ":")
 	auth := smtp.PlainAuth("", user, password, hp[0])
@@ -33,6 +43,25 @@ func main() {
 	body := "email test by net/smtp"
 	fmt.Println("send email")
 	err := SendToMailWithoutCC(user, password, host, subject, body, mailtype, to)
+	if err != nil {
+		fmt.Println("Send mail error!")
+		fmt.Println(err)
+	} else {
+		fmt.Println("Send mail success!")
+	}
+}
+
+func main2() {
+	vm := gmonitor.SendToMailViewModel{}
+	vm.User = "hrlinktest@hrlink.com.cn"
+	vm.Password = "!QA2ws3ed"
+	vm.Host = "smtp.exmail.qq.com:587"
+	vm.Send_to = []string{"richter.zhang@hrlink.com.cn"}
+	vm.Subject = "email test by net / smtp"
+	vm.Mailtype = "html"
+	vm.Body = "email test by net/smtp"
+	fmt.Println("send email")
+	err := gmonitor.SendToMailV2(vm)
 	if err != nil {
 		fmt.Println("Send mail error!")
 		fmt.Println(err)
