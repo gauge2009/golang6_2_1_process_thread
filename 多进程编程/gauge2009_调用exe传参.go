@@ -5,16 +5,14 @@ import (
 	"os/exec"
 )
 
-
-func main(){
+func main() {
 
 	callEXE1()
 }
 
-
 func callEXE1() {
 	arg := []string{}
-	arg = append(arg,"inspect,60004")
+	arg = append(arg, "inspect,60004")
 
 	//cmd1 := exec.Command("cd C:\\src\\Saas-TaskTrack\\框架\\TMW\\ActorStage\\HRLink.ExecutorStage\\bin\\Debug" )
 	//output1, err := cmd1.CombinedOutput()
@@ -25,6 +23,7 @@ func callEXE1() {
 	//fmt.Printf("callEXE2结果:\n%v\n\n%v\n\n%v", string(output1), cmd1.Stdout, cmd1.Stderr)
 
 	cmd := exec.Command("C:\\src\\Saas-TaskTrack\\框架\\TMW\\ActorStage\\HRLink.ExecutorStage\\bin\\Debug\\HRLink.Actor.inspect.ric", arg...)
+	//C:\src\Saas-TaskTrack\框架\TMW\CrystalBeacon\GrystalBeacon.Callee\bin\Debug\GrystalBeacon.Callee.exe
 	//会向 cmd.Stdout和cmd.Stderr写入信息,其实cmd.Stdout==cmd.Stderr,具体可见源码
 	output, err := cmd.CombinedOutput()
 	if err != nil {

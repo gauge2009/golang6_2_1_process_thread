@@ -20,7 +20,7 @@ func main() {
 
 	/// ██ ██ ██  检查磁盘
 	path := "C:"
-	var ceiling float64 = 95
+	var ceiling float64 = 91
 	var ceilingLine int = int(ceiling)
 
 	perc := CheckMDiskUsage(path)
@@ -31,15 +31,17 @@ func main() {
 		fmt.Printf("%+v \n", message)
 
 		/// ██ ██ ██  预警邮件
-		subject := message
-		msg := message
-		AlertByMailv2(subject, msg)
+		//subject := message
+		//msg := message
+		subject := "subject12"
+		msg := "message23"
+		AlertByMail_ByG(subject, msg)
 
 	}
 	//CheckMemory()
 }
 
-func AlertByMailv2(subject, message string) {
+func AlertByMail_ByG(subject, message string) {
 	m := gomail.NewMessage()
 	///////m.SetHeader("From", "richter.zhang@hrlink.com.cn")// gomail: could not send email 1: 501 mail from address must be same as authorization user
 	//m.SetHeader("From", "hrlinktest@hrlink.com.cn")
@@ -49,14 +51,15 @@ func AlertByMailv2(subject, message string) {
 	//m.SetBody("text/html", message)
 	////////m.Attach("/home/Alex/lolcat.jpg")
 	m.SetHeaders(map[string][]string{
-		"From":    {m.FormatAddress("hrlinktest@hrlink.com.cn", "GrystalBeacon")},
-		"To":      {"richter.zhang@hrlink.com.cn", "promvc@live.com"},
-		"Cc":      {"promvc@live.com"},
+		"From": {m.FormatAddress("hrlinktest@hrlink.com.cn", "GrystalBeaconsdf")},
+		"To":   {"richter.zhang@hrlink.com.cn"},
+		//"To":      {"richter.zhang@hrlink.com.cn", "promvc@live.com"},
+		//"Cc":      {"promvc@live.com"},
 		"Subject": {subject},
 	})
 	m.SetBody("text/html", message)
 	d := gomail.NewDialer("smtp.exmail.qq.com", 587, "hrlinktest@hrlink.com.cn", "!QA2ws3ed")
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: false}
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
